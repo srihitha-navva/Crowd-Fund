@@ -1,0 +1,26 @@
+### campaignReq.http
+
+### Create Campaign
+POST http://localhost:4000/campaign-api/campaign
+Content-Type: application/json
+
+{
+    "title": "HI",
+    "description": "This is a long description explaining the purpose of helping students with education...",
+    "goalAmount": 10000,
+    "deadline": "2026-12-31"
+}
+
+### Get Approved Campaigns
+GET http://localhost:4000/campaign-api/campaign
+
+### Update Campaign
+PUT http://localhost:4000/campaign-api/campaign/69faff2b019b36c71f95de43
+Content-Type: application/json
+
+{
+    "title": "Help People"
+}
+
+### Delete Campaign
+DELETE http://localhost:4000/campaign-api/campaign/69faff2b019b36c71f95de43

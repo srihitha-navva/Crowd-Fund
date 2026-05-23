@@ -1,0 +1,12 @@
+### donationReq.http
+
+### donate
+POST http://localhost:4000/donation-api/donate/69fb02ac019b36c71f95de44
+Content-Type: application/json
+
+{
+    "amount": 2000
+}
+
+### Get donation history
+GET http://localhost:4000/donation-api/my-donations

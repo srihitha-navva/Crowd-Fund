@@ -1,0 +1,37 @@
+### authReq.http
+
+### register
+POST http://localhost:4000/auth/users
+Content-Type: application/json
+
+{
+  "name":"nishika",
+  "mobile":"9876543219",
+  "email":"nishika0205@gmail.com",
+  "password":"12345",
+  "role":"FUNDRAISER"
+}
+
+### login
+POST http://localhost:4000/auth/login
+Content-Type: application/json
+
+{
+  "email":"nishika0205@gmail.com",
+  "password":"12345"
+}
+
+### logout
+GET http://localhost:4000/auth/logout
+
+### change pass
+PUT http://localhost:4000/auth/password
+Content-Type: application/json
+
+{
+  "currentPassword": "123456",
+  "newPassword": "1234567"
+}
+
+### page refresh(checks if logeed in or logged out)
+GET http://localhost:4000/auth/check-auth

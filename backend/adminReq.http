@@ -1,0 +1,19 @@
+### adminReq.http
+
+### Admin Login -- data seeding
+POST http://localhost:4000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "password": "admin123"
+}
+
+### read all PENDING CAMPAIGNS 
+GET http://localhost:4000/admin-api/campaigns/pending
+
+### APPROVE
+PUT http://localhost:4000/admin-api/campaigns/approve/69fc15fcb717711ddf3ea15d
+
+### REJECT
+PUT http://localhost:4000/admin-api/campaigns/reject/69faff2b019b36c71f95de43
