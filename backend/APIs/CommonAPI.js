@@ -61,8 +61,8 @@ commonApp.post("/login",async (req, res) => {
     //set token to res header as httpOnly
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax"
+      secure: true,
+      sameSite: "none"
     })
     //convert document into js obj
     const userObj = user.toObject()
@@ -80,8 +80,8 @@ commonApp.get("/logout",(req, res) => {
     //delete token frm cookie storage
     res.clearCookie("token",{
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: true,
+        sameSite: "none"
     })
     //send res
     res.status(200).json({message:"Logout successful"})
