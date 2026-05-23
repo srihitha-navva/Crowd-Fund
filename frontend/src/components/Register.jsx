@@ -2,9 +2,11 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import * as theme from "../styles/Common";
 import { API_BASE_URL } from "../config/api";
+import { useAuth } from "../store/authStore";
 
 function Register() {
   const navigate = useNavigate();
+  const setAuthenticatedUser = useAuth((state) => state.setAuthenticatedUser);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -76,8 +78,9 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("Registration successful! Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2000);
+        setAuthenticatedUser(data.payload);
+        setMessage("Registration successful! Opening your homepage...");
+        navigate("/", { replace: true });
       } else {
         setMessage(data.message || "Registration failed");
       }

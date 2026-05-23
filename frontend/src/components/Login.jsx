@@ -26,13 +26,7 @@ function Login() {
 
     try {
       await login(formData);
-      // Check if login was successful by reading from store
-      setTimeout(() => {
-        const isAuthenticated = useAuth.getState().isAuthenticated;
-        if (isAuthenticated) {
-          navigate("/");
-        }
-      }, 500);
+      navigate("/", { replace: true });
     } catch {
       setError("Login failed. Please check your credentials.");
     } finally {

@@ -24,6 +24,7 @@ import {
 function App() {
   const checkAuth = useAuth((state) => state.checkAuth);
   const authChecked = useAuth((state) => state.authChecked);
+  const isAuthenticated = useAuth((state) => state.isAuthenticated);
 
   useEffect(() => {
     checkAuth();
@@ -54,8 +55,18 @@ function App() {
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/contact" element={<ContactUs />} />
       </Route>
-      <Route path="/login" element={<><Header /><Login /><Footer /></>} />
-      <Route path="/register" element={<><Header /><Register /><Footer /></>} />
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <><Header /><Login /><Footer /></>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <><Header /><Register /><Footer /></>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

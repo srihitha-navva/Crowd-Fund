@@ -30,6 +30,16 @@ export const useAuth = create((set, get) => ({
   isAuthenticated: Boolean(storedUser),
   authChecked: false,
   error: null,
+  setAuthenticatedUser: (user) => {
+    storeUser(user);
+    set({
+      currentUser: user,
+      loading: false,
+      isAuthenticated: true,
+      authChecked: true,
+      error: null,
+    });
+  },
   checkAuth: async () => {
     try {
       set((state) => ({ ...state, loading: true, error: null }));
@@ -81,6 +91,7 @@ export const useAuth = create((set, get) => ({
         authChecked: true,
         error: null,
       }));
+      return loggedInUser;
     } catch (err) {
       console.log("err is ", err);
       set({
@@ -91,6 +102,7 @@ export const useAuth = create((set, get) => ({
         //error: err,
         error: err.response?.data?.error || "Login failed",
       });
+      throw err;
     }
   },
   logout: async () => {

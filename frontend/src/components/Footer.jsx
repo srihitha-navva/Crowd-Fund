@@ -1,9 +1,19 @@
 import { NavLink } from "react-router-dom";
 import * as theme from "../styles/Common";
+import { useAuth } from "../store/authStore";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
   const linkClass = "hover:text-white transition-colors";
+  const isAuthenticated = useAuth((state) => state.isAuthenticated);
+  const user = useAuth((state) => state.currentUser);
+
+  const actionLink =
+    user?.role === "FUNDRAISER"
+      ? { to: "/fundraising", label: "Create Campaign" }
+      : user?.role === "ADMIN"
+      ? { to: "/admin-dashboard", label: "Dashboard" }
+      : { to: "/campaigns", label: "Explore Campaigns" };
 
   return (
     <footer className="border-t-4 border-[#DBCEA5] bg-[#4F412B] text-white shadow-[0_-10px_24px_rgba(79,65,43,0.12)]">
@@ -25,7 +35,11 @@ function Footer() {
             <ul className="space-y-2 text-sm text-[#ECE7D1]/85">
               <li><NavLink to="/" className={linkClass}>Home</NavLink></li>
               <li><NavLink to="/campaigns" className={linkClass}>Campaigns</NavLink></li>
-              <li><NavLink to="/register" className={linkClass}>Start Fundraising</NavLink></li>
+              <li>
+                <NavLink to={isAuthenticated ? actionLink.to : "/register"} className={linkClass}>
+                  {isAuthenticated ? actionLink.label : "Start Fundraising"}
+                </NavLink>
+              </li>
               <li><NavLink to="/how-it-works" className={linkClass}>How it Works</NavLink></li>
             </ul>
           </div>

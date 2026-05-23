@@ -5,13 +5,20 @@ import {
   CircleDollarSign,
   Globe2,
   Headphones,
+  HeartHandshake,
+  LayoutDashboard,
+  PlusCircle,
   ShieldCheck,
+  UserCircle,
 } from "lucide-react";
 import { API_BASE_URL } from "../config/api";
+import { useAuth } from "../store/authStore";
 import heroImg from "../assets/home_6.png";
 import { getCampaignImage } from "../utils/campaignImages";
 
 function Home() {
+  const isAuthenticated = useAuth((state) => state.isAuthenticated);
+  const user = useAuth((state) => state.currentUser);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -55,6 +62,173 @@ function Home() {
       icon: Headphones,
     },
   ];
+
+  const roleHome = {
+    DONOR: {
+      label: "Donor Home",
+      title: `Welcome back${user?.name ? `, ${user.name}` : ""}`,
+      description:
+        "Find meaningful campaigns, follow your giving activity, and support causes that need help now.",
+      actions: [
+        { to: "/campaigns", label: "Explore Campaigns", icon: HeartHandshake, style: theme.btnPrimary },
+        { to: "/donor-profile", label: "My Profile", icon: UserCircle, style: theme.btnSecondary },
+      ],
+      highlights: [
+        "Browse verified campaigns waiting for supporters.",
+        "Donate securely and keep your giving history in one place.",
+        "Return anytime to continue supporting causes you care about.",
+      ],
+    },
+    FUNDRAISER: {
+      label: "Fundraiser Home",
+      title: `Ready to grow your campaign${user?.name ? `, ${user.name}` : ""}?`,
+      description:
+        "Create campaigns, share your story, and track the support your community is building with you.",
+      actions: [
+        { to: "/fundraising", label: "Create Campaign", icon: PlusCircle, style: theme.btnPrimary },
+        { to: "/fundraiser-profile", label: "My Profile", icon: UserCircle, style: theme.btnSecondary },
+      ],
+      highlights: [
+        "Submit a campaign with photos, proof files, goals, and deadlines.",
+        "Campaigns are reviewed by admins before donors can contribute.",
+        "Keep your fundraiser profile ready for supporters to trust your story.",
+      ],
+    },
+    ADMIN: {
+      label: "Admin Home",
+      title: `Platform overview${user?.name ? ` for ${user.name}` : ""}`,
+      description:
+        "Review submitted campaigns, monitor activity, and keep the platform trustworthy for everyone.",
+      actions: [
+        { to: "/admin-dashboard", label: "Open Dashboard", icon: LayoutDashboard, style: theme.btnPrimary },
+        { to: "/admin-profile", label: "My Profile", icon: UserCircle, style: theme.btnSecondary },
+      ],
+      highlights: [
+        "Approve or reject campaign submissions from one dashboard.",
+        "Track users, donations, and platform totals.",
+        "Inspect campaign details before they go live for donors.",
+      ],
+    },
+  };
+
+  const currentRoleHome = roleHome[user?.role];
+
+  if (isAuthenticated && currentRoleHome) {
+    return (
+      <main className={theme.pageBackground}>
+        <section className="bg-[#FBF8EC]">
+          <div className={theme.pageWrapper}>
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div>
+                <p className={theme.campaignMeta}>{currentRoleHome.label}</p>
+                <h1 className={theme.pageTitle}>{currentRoleHome.title}</h1>
+                <p className={theme.body + " max-w-2xl mb-8"}>
+                  {currentRoleHome.description}
+                </p>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  {currentRoleHome.actions.map((action) => {
+                    const Icon = action.icon;
+                    return (
+                      <NavLink key={action.to} to={action.to} className={action.style}>
+                        <Icon size={18} className="mr-2" />
+                        {action.label}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-[#DBCEA5]/80 bg-white p-6 shadow-sm">
+                <h2 className={theme.heading2 + " mb-5"}>Your next steps</h2>
+                <div className="space-y-4">
+                  {currentRoleHome.highlights.map((highlight, index) => (
+                    <div key={highlight} className="flex gap-4">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#8E977D] text-sm font-bold text-white">
+                        {index + 1}
+                      </div>
+                      <p className={theme.bodySmall}>{highlight}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className={theme.pageWrapper}>
+          <div className="flex items-center justify-between mb-10">
+            <h2 className={theme.heading}>
+              {user?.role === "ADMIN" ? "Recent Campaigns" : "Featured Campaigns"}
+            </h2>
+            <NavLink to={user?.role === "ADMIN" ? "/admin-dashboard" : "/campaigns"} className={theme.link}>
+              View All
+            </NavLink>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-12">
+              <p className={theme.muted}>Loading campaigns...</p>
+            </div>
+          ) : campaigns.length > 0 ? (
+            <div className={theme.campaignGrid}>
+              {campaigns.map((campaign) => (
+                <NavLink
+                  key={campaign._id}
+                  to={`/campaign/${campaign._id}`}
+                  className={theme.campaignCard}
+                >
+                  <div className={theme.campaignImage}>
+                    <img
+                      src={getCampaignImage(campaign)}
+                      alt={campaign.title || "Campaign"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <p className={theme.campaignMeta}>{campaign.category || "Campaign"}</p>
+                    <h3 className={theme.heading2 + " mt-2 mb-2 line-clamp-2"}>
+                      {campaign.title}
+                    </h3>
+                    <p className={theme.bodySmall + " line-clamp-2 mb-4"}>
+                      {campaign.description}
+                    </p>
+                    <div className={theme.progressBar + " mb-2"}>
+                      <div
+                        className={theme.progressFill}
+                        style={{
+                          width: `${Math.min(
+                            ((campaign.raisedAmount || 0) / (campaign.goalAmount || 1)) * 100,
+                            100
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <p className={theme.campaignAmount}>
+                          ₹{Number(campaign.raisedAmount || 0).toLocaleString()}
+                        </p>
+                        <p className={theme.muted}>
+                          of ₹{Number(campaign.goalAmount || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <p className={theme.muted}>
+                        {campaign.donorCount || campaign.donorsCount || 0} supporters
+                      </p>
+                    </div>
+                  </div>
+                </NavLink>
+              ))}
+            </div>
+          ) : (
+            <div className={theme.emptyState}>
+              <p>No campaigns yet.</p>
+            </div>
+          )}
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className={theme.pageBackground}>

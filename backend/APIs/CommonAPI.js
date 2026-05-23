@@ -29,9 +29,17 @@ commonApp.post("/users",upload.single("profileImage"),async (req, res, next) => 
     // hash password
     newUser.password=await hash(newUser.password,10)
     // save user
-    await UserModel.create(newUser)
+    const createdUser = await UserModel.create(newUser)
+    const token=sign({id:createdUser._id,email:createdUser.email,role:createdUser.role},process.env.SECRET_KEY,{expiresIn:"10h"})
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none"
+    })
+    const userObj = createdUser.toObject()
+    delete userObj.password
     // send res
-    res.status(201).json({message:"User created successfully"})
+    res.status(201).json({message:"User created successfully",payload:userObj})
   }catch(err){
     console.log("Register error:",err.message)
     // rollback image

@@ -22,15 +22,19 @@ function FundraisingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isAuthenticated || user?.role !== "FUNDRAISER") {
+    const action = isAuthenticated
+      ? { to: "/", label: "Go to Home" }
+      : { to: "/register", label: "Become a Fundraiser" };
+
     return (
       <div className={theme.pageBackground + " min-h-screen"}>
         <div className={theme.pageWrapper + " text-center py-20"}>
           <h1 className={theme.pageTitle + " mb-4"}>Access Denied</h1>
           <p className={theme.body + " mb-8"}>
-            Only fundraisers can create campaigns. Please sign up as a fundraiser.
+            Only fundraisers can create campaigns.
           </p>
-          <NavLink to="/register" className={theme.btnPrimary}>
-            Become a Fundraiser
+          <NavLink to={action.to} className={theme.btnPrimary}>
+            {action.label}
           </NavLink>
         </div>
       </div>

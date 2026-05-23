@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { ListChecks, Mail, MessageCircle, ShieldCheck } from "lucide-react";
 import * as theme from "../styles/Common";
+import { useAuth } from "../store/authStore";
 
 const pages = {
   how: {
@@ -73,6 +74,15 @@ const pages = {
 function InfoPage({ type }) {
   const page = pages[type];
   const Icon = page.icon;
+  const isAuthenticated = useAuth((state) => state.isAuthenticated);
+  const user = useAuth((state) => state.currentUser);
+  const signedInAction =
+    user?.role === "FUNDRAISER"
+      ? { to: "/fundraising", label: "Create Campaign" }
+      : user?.role === "ADMIN"
+      ? { to: "/admin-dashboard", label: "Open Dashboard" }
+      : { to: "/campaigns", label: "Explore Campaigns" };
+  const action = isAuthenticated && page.action.to === "/register" ? signedInAction : page.action;
 
   return (
     <main className={theme.pageBackground}>
@@ -94,8 +104,8 @@ function InfoPage({ type }) {
           </div>
 
           <div className="mt-10">
-            <NavLink to={page.action.to} className={theme.btnPrimary}>
-              {page.action.label}
+            <NavLink to={action.to} className={theme.btnPrimary}>
+              {action.label}
             </NavLink>
           </div>
         </div>
